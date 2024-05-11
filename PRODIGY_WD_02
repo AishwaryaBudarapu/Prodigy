@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="stopwatch">
+    <div id="display">00:00:00</div>
+    <button id="startStop">Start</button>
+    <button id="reset">Reset</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+body {
+  font-family: Arial, sans-serif;
+}
+
+.stopwatch {
+  text-align: center;
+}
+
+#display {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+button {
+  font-size: 1em;
+  padding: 5px 10px;
+  margin: 0 5px;
+}
+let startTime;
+let running = false;
+let elapsedTime = 0;
+let timerInterval;
+
+const display = document.getElementById('display');
+const startStopBtn = document.getElementById('startStop');
+const resetBtn = document.getElementById('reset');
+
+function startStop() {
+  if (running) {
+    running = false;
+    clearInterval(timerInterval);
+    startStopBtn.textContent = 'Start';
+  } else {
+    running = true;
+    startTime = Date.now() - elapsedTime;
+    timerInterval = setInterval(updateDisplay, 10);
+    startStopBtn.textContent = 'Stop';
+  }
+}
+
+function updateDisplay() {
+  const now = Date.now();
+  elapsedTime = now - startTime;
+  display.textContent = formatTime(elapsedTime);
+}
+
+function formatTime(milliseconds) {
+  let hours = Math.floor(milliseconds / 3600000);
+  milliseconds %= 3600000;
+  let minutes = Math.floor(milliseconds / 60000);
+  milliseconds %= 60000;
+  let seconds = Math.floor(milliseconds / 1000);
+  milliseconds %= 1000;
+
+  return (
+    String(hours).padStart(2, '0') +
+    ':' +
+    String(minutes).padStart(2, '0') +
+    ':' +
+    String(seconds).padStart(2, '0')
+  );
+}
+
+function reset() {
+  clearInterval(timerInterval);
+  running = false;
+  elapsedTime = 0;
+  display.textContent = '00:00:00';
+  startStopBtn.textContent = 'Start';
+}
+
+startStopBtn.addEventListener('click', startStop);
+resetBtn.addEventListener('click', reset);
